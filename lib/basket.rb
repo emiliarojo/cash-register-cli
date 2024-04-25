@@ -1,53 +1,37 @@
+require_relative 'product'
+require_relative 'discount'
+
 # Manages products and quantities in a shopping basket.
 class Basket
   attr_reader :items
 
-  def initialize
-    @items = {}  # Initializes the basket with an empty hash.
+  def initialize(discount)
+    @items = {}
+    @discount = discount
   end
 
-  # Adds quantity of a product to the basket and applise discount alert if applicable.
-  def add(product, quantity, discount = nil)
-    return if quantity < 1  # Skip if quantity is not positive.
+  # Add a product to the basket.
+  def add(product, quantity)
+    return if quantity <= 0
 
-    current_quantity = @items.fetch(product.code, 0)
-    new_quantity = current_quantity + quantity
-    @items[product.code] = new_quantity
-
-    alert_discount(product, new_quantity, discount) if discount
+    @items[product.code] = (@items[product.code] || 0) + quantity # Add quantity to existing product or create new product in basket
   end
 
-  # Removes quantity of a product
-  def remove(product, quantity, discount = nil)
-    return unless @items.include?(product.code)  # Skip if product not in basket.
+  # Remove a product from the basket.
+  def remove(product, quantity)
+    return unless @items.key?(product.code) && quantity > 0 # Check if product is in basket and quantity is positive
 
-    remaining_quantity = @items[product.code] - quantity
-    if remaining_quantity <= 0
-      @items.delete(product.code) # Remove product from basket if quantity is zero or negative.
-    else
-      @items[product.code] = remaining_quantity
-    end
-
-    alert_discount(product, remaining_quantity, discount) if discount
+    @items[product.code] -= quantity # Remove quantity from product
+    @items.delete(product.code) if @items[product.code] <= 0 # Remove product if quantity is zero or less
   end
 
-  # Alerts user if a discount is applied.
-  def alert_discount(product, quantity, discount)
-    rule = discount.rules_for(product.code)
-    if rule && quantity >= rule[:threshold]
-      puts "Discount applied on #{product.name}: #{rule[:description]}"
-    end
-  end
-
-  # Calculates the total price of the basket's contents and applies any discounts.
-  def total(discount)
-    return 0 if @items.empty?
-
-    @items.sum do |code, quantity|
-      product = Product.new(code)
-      discounted_price = discount.apply_discounts({code => quantity})
-      puts "#{product.name}: Quantity: #{quantity}, Total Price: €#{'%.2f' % discounted_price}"
-      discounted_price
+  # Calculate the total price of the basket.
+  def total
+    @items.sum do |product_code, quantity|
+      product = Product.new(product_code) # Create product object
+      price = product.price # Get product price
+      discount_amount = @discount.apply(product_code, quantity, price) if @discount # Apply discount if there's one applicable
+      discount_amount || (price * quantity) # Return discount amount or total price if no discount
     end
   end
 end

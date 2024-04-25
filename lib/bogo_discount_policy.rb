@@ -1,4 +1,4 @@
-require_relative '../lib/discount_policy'
+require_relative 'discount_policy'
 
 # Applies a Buy-One-Get-One discount policy.
 class BogoDiscountPolicy < DiscountPolicy
