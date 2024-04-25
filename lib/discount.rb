@@ -1,6 +1,8 @@
 # Manages the application of discount policies for products.
 class Discount
   def initialize
+    # BogoDiscountPolicy.apply_discount(quantity, price)
+    # BulkDiscountPolicy.apply_discount(quantity, price, threshold, discount_price)
     @policies = {
       'GR1' => ->(quantity, price) { BogoDiscountPolicy.apply_discount(quantity, price) },
       'SR1' => ->(quantity, price) { BulkDiscountPolicy.apply_discount(quantity, price, 3, 4.50) },
