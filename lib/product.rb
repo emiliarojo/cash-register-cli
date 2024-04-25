@@ -1,21 +1,17 @@
+# Manages individual product properties.
 class Product
-  PRICES = {
-    'GR1' => 3.11,
-    'SR1' => 5.00,
-    'CF1' => 11.23
-  }.freeze
-
-  NAMES = {
-    'GR1' => 'Green Tea',
-    'SR1' => 'Strawberries',
-    'CF1' => 'Coffee'
-  }.freeze
-
   attr_reader :code, :name, :price
 
+  PRODUCTS = {
+    'GR1' => { name: 'Green Tea', price: 3.11 },
+    'SR1' => { name: 'Strawberries', price: 5.00 },
+    'CF1' => { name: 'Coffee', price: 11.23 }
+  }.freeze
+
   def initialize(code)
+    product = PRODUCTS[code]
     @code = code
-    @name = NAMES[code]
-    @price = PRICES[code]
+    @name = product[:name]
+    @price = product[:price]
   end
 end
