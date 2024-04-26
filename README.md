@@ -60,3 +60,4 @@ The application currently supports these types of discounts:
 - Bulk Purchase Discounts: Reduces the price when the quantity reaches a specific threshold.
 
 ## UML Diagram
+![cash_register_cli_uml](https://github.com/emiliarojo/cash-register-cli/assets/115421477/e1111be5-b579-43fc-885d-86952f282d3a)
